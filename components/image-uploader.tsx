@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react"
 import { Upload, X, Image as ImageIcon, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 
 export interface UploadedFile {
   id: string
@@ -110,58 +111,85 @@ export function ImageUploader({
       return prev.filter((f) => f.id !== id)
     })
   }, [])
+const handleUpload = async () => {
+  const pendingFiles = files.filter((f) => f.status === "pending")
+  if (pendingFiles.length === 0) return
 
-  const handleUpload = async () => {
-    const pendingFiles = files.filter((f) => f.status === "pending")
-    if (pendingFiles.length === 0) return
+  setIsUploading(true)
 
-    setIsUploading(true)
-
-    // Simula upload para cada arquivo
-    for (const uploadFile of pendingFiles) {
-      setFiles((prev) =>
-        prev.map((f) => (f.id === uploadFile.id ? { ...f, status: "uploading" } : f))
-      )
-
-      // Simula progresso do upload
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise((resolve) => setTimeout(resolve, 100))
-        setFiles((prev) =>
-          prev.map((f) => (f.id === uploadFile.id ? { ...f, progress } : f))
-        )
+  try {
+    // Passo 1: Enviar TODOS os nomes em uma única requisição
+    pendingFiles.map((f) =>{
+      console.log("file:", f.file.name)
+    })
+    const req = await fetch(
+      process.env.NEXT_PUBLIC_LAMBDA_URL!,
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          pendingFiles: pendingFiles.map((f) => ({
+            fileNames: f.file.name,
+            contentType: f.file.type
+          })),
+        }),
+        headers: {
+          "Content-Type":"application/json"
+        },
       }
+    )
 
-      // Se tiver callback de upload, chama
-      if (onUpload) {
-        try {
-          await onUpload([uploadFile.file])
-          setFiles((prev) =>
-            prev.map((f) =>
-              f.id === uploadFile.id ? { ...f, status: "success", progress: 100 } : f
-            )
-          )
-        } catch (error) {
-          setFiles((prev) =>
-            prev.map((f) =>
-              f.id === uploadFile.id
-                ? { ...f, status: "error", error: "Erro ao fazer upload" }
-                : f
-            )
-          )
-        }
-      } else {
-        // Demo: marca como sucesso
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === uploadFile.id ? { ...f, status: "success", progress: 100 } : f
-          )
-        )
-      }
+    const res = await req.json()
+   
+    console.log("res:", res)
+
+    const uploadUrls = JSON.parse(res.body);
+    console.log("uploadUrls:", uploadUrls)
+   
+
+    // Passo 2: Fazer upload dos arquivos direto ao S3
+    const s3Uploads = pendingFiles.map((uploadedFile, index) =>
+      fetch(uploadUrls[index].uploadUrl, {
+        method: "PUT",
+        body: uploadedFile.file,
+        headers: {
+          "Content-Type": uploadedFile.file.type,
+        },
+      })
+    )
+    console.log("s3Uploads:", s3Uploads)
+
+    const s3Responses = await Promise.all(s3Uploads)
+    const allSuccess = s3Responses.every((res) => res.ok)
+
+    if (!allSuccess) {
+      throw new Error("Falha no upload de um ou mais arquivos")
     }
 
+    setFiles((prev) =>
+      prev.map((f) =>
+        pendingFiles.some((pf) => pf.id === f.id)
+          ? { ...f, status: "success" as const }
+          : f
+      )
+    )
+    clearAll()
+  } catch (error) {
+    console.error("Erro no upload:", error)
+    setFiles((prev) =>
+      prev.map((f) =>
+        pendingFiles.some((pf) => pf.id === f.id)
+          ? {
+              ...f,
+              status: "error" as const,
+              error: error instanceof Error ? error.message : "Erro no upload",
+            }
+          : f
+      )
+    )
+  } finally {
     setIsUploading(false)
   }
-
+}
   const clearAll = () => {
     files.forEach((f) => URL.revokeObjectURL(f.preview))
     setFiles([])
@@ -211,10 +239,10 @@ export function ImageUploader({
 
           <div className="space-y-2">
             <p className="text-lg font-semibold text-foreground">
-              Arraste e solte suas imagens aqui
+              Drag and drop your images here
             </p>
             <p className="text-sm text-muted-foreground">
-              ou clique para selecionar arquivos
+              or click to select files 
             </p>
           </div>
 
@@ -355,7 +383,7 @@ export function ImageUploader({
         <div className="text-center py-8 border-2 border-border rounded-sm bg-card">
           <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
           <p className="text-muted-foreground">
-            Nenhuma imagem selecionada ainda
+            No images selected yet. Drag and drop files above or click to choose.
           </p>
         </div>
       )}

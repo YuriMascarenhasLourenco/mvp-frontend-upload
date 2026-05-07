@@ -3,40 +3,20 @@ import { CheckCircle2, Code, Database, Key, Server } from "lucide-react"
 export function UploadInstructions() {
   return (
     <div className="space-y-6">
-      {/* AWS Configuration Card */}
-      <div className="border-2 border-border rounded-sm bg-card">
-        <div className="px-4 py-3 border-b-2 border-border bg-muted/50">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-            Configuração AWS
-          </h3>
-        </div>
-        <div className="p-4 space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Configure as variáveis de ambiente para conectar com seu bucket S3:
-          </p>
-
-          <div className="space-y-2">
-            <EnvVariable name="AWS_ACCESS_KEY_ID" />
-            <EnvVariable name="AWS_SECRET_ACCESS_KEY" />
-            <EnvVariable name="AWS_REGION" />
-            <EnvVariable name="AWS_S3_BUCKET_NAME" />
-          </div>
-        </div>
-      </div>
 
       {/* Features Card */}
       <div className="border-2 border-border rounded-sm bg-card">
         <div className="px-4 py-3 border-b-2 border-border bg-muted/50">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-            Funcionalidades
+            Functionalities
           </h3>
         </div>
         <div className="p-4 space-y-3">
-          <Feature icon={CheckCircle2} text="Drag & drop de múltiplos arquivos" />
-          <Feature icon={CheckCircle2} text="Preview das imagens" />
-          <Feature icon={CheckCircle2} text="Validação de tipo e tamanho" />
-          <Feature icon={CheckCircle2} text="Barra de progresso" />
-          <Feature icon={CheckCircle2} text="Pronto para integração AWS S3" />
+          <Feature icon={CheckCircle2} text="Drag & drop of multiples arquives" />
+          <Feature icon={CheckCircle2} text="Images preview" />
+          <Feature icon={CheckCircle2} text="Validation of file type and size" />
+          <Feature icon={CheckCircle2} text="Progress bar" />
+          <Feature icon={CheckCircle2} text="Integration with AWS S3, Lambda, CloudFront and API Gateway" />
         </div>
       </div>
 
@@ -44,7 +24,7 @@ export function UploadInstructions() {
       <div className="border-2 border-border rounded-sm bg-card">
         <div className="px-4 py-3 border-b-2 border-border bg-muted/50">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-            Endpoint da API
+            API Endpoint
           </h3>
         </div>
         <div className="p-4 space-y-3">
@@ -55,25 +35,10 @@ export function UploadInstructions() {
             <code className="text-foreground">/api/upload</code>
           </div>
           <p className="text-sm text-muted-foreground">
-            Envia FormData com campo &quot;files&quot; contendo as imagens.
+            Sends FormData with a &quot;files&quot; field containing the images.
           </p>
         </div>
-      </div>
-
-      {/* Next Steps Card */}
-      <div className="border-2 border-primary/30 rounded-sm bg-primary/5">
-        <div className="px-4 py-3 border-b-2 border-primary/30 bg-primary/10">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-            Próximos Passos
-          </h3>
-        </div>
-        <div className="p-4 space-y-3">
-          <Step number={1} text="Configure as credenciais AWS" />
-          <Step number={2} text="Crie um bucket S3" />
-          <Step number={3} text="Configure as políticas CORS" />
-          <Step number={4} text="Descomente o código S3 na API" />
-        </div>
-      </div>
+      </div>     
     </div>
   )
 }

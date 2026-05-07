@@ -10,10 +10,10 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground uppercase tracking-wide">
-                Upload de Imagens
+                Images Upload System
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Sistema de upload para integração com AWS S3
+                Upload System with AWS Integration
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -32,10 +32,10 @@ export default function Home() {
           <div className="lg:col-span-2">
             <div className="mb-6">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-2">
-                Passo 1: Selecione as Imagens
+                Step 1: Select your images
               </h2>
               <p className="text-muted-foreground">
-                Faça upload de arquivos .jpg, .png, .gif ou .webp. Limite de 10MB por arquivo.
+                Upload .jpg, .png, .gif, or .webp files. Maximum size per file is 10MB.
               </p>
             </div>
 
@@ -53,7 +53,7 @@ export default function Home() {
       <footer className="border-t-2 border-border bg-card mt-auto">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>Frontend MVP para integração com AWS S3</p>
+            <p>Frontend MVP for AWS S3 Integration</p>
             <div className="flex items-center gap-4">
               <a
                 href="https://docs.aws.amazon.com/s3/"
@@ -61,7 +61,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                Documentação AWS S3
+                AWS S3 Documentation
               </a>
             </div>
           </div>

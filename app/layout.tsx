@@ -9,7 +9,6 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'Upload de Imagens - AWS S3',
   description: 'Sistema de upload de imagens para integração com AWS S3',
-  generator: 'v0.app',
   icons: {
     icon: [
       {
@@ -19,10 +18,6 @@ export const metadata: Metadata = {
       {
         url: '/icon-dark-32x32.png',
         media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
       },
     ],
     apple: '/apple-icon.png',
