@@ -119,9 +119,6 @@ const handleUpload = async () => {
 
   try {
     // Passo 1: Enviar TODOS os nomes em uma única requisição
-    pendingFiles.map((f) =>{
-      console.log("file:", f.file.name)
-    })
     const req = await fetch(
       process.env.NEXT_PUBLIC_LAMBDA_URL!,
       {
@@ -140,10 +137,8 @@ const handleUpload = async () => {
 
     const res = await req.json()
    
-    console.log("res:", res)
 
     const uploadUrls = JSON.parse(res.body);
-    console.log("uploadUrls:", uploadUrls)
    
 
     // Passo 2: Fazer upload dos arquivos direto ao S3
@@ -156,7 +151,6 @@ const handleUpload = async () => {
         },
       })
     )
-    console.log("s3Uploads:", s3Uploads)
 
     const s3Responses = await Promise.all(s3Uploads)
     const allSuccess = s3Responses.every((res) => res.ok)
